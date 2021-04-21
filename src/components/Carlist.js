@@ -17,18 +17,24 @@ import { useTable } from 'react-table'
     //     .catch(err => console.log(err));
     // }
 
-    // Delete car
-  const onDelClick = (link) => {
-    fetch(link, {method: 'DELETE'})
-    .then(res => {
-      this.fetchCars();
-    })
-    .catch(err => {
-      console.error(err)
-    }) 
-  }
+
 
     useEffect(() => {
+       fetchCars();
+      },[]);
+
+      // Delete car
+    const onDelClick = (link) => {
+        fetch(link, {method: 'DELETE'})
+        .then(res => {
+          fetchCars();
+        })
+        .catch(err => {
+          console.error(err)
+        }) 
+      }
+
+      const fetchCars = () => {
         fetch(SERVER_URL + '/api/cars')
         .then((response) => response.json())
         .then((responseData) => {
@@ -36,8 +42,9 @@ import { useTable } from 'react-table'
             setData(responseData._embedded.cars);
         })
         .catch(err => console.log(err));
-      });
+      }
 
+    
 
       const columns = React.useMemo(
         () => [
@@ -126,5 +133,8 @@ import { useTable } from 'react-table'
         );
     
 }
+
+    
+
 
 export default Carlist;
