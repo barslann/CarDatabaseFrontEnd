@@ -4,7 +4,8 @@ import { useTable } from "react-table";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AddCar from "./AddCar";
-import {CSVLink} from 'react-csv';
+import { CSVLink } from "react-csv";
+import EditCar from "./EditCar";
 
 const Carlist = () => {
   const [data, setData] = useState([]);
@@ -68,25 +69,26 @@ const Carlist = () => {
   };
 
   // Update car
-  const updateCar = (car, link) => {
-    fetch(link, 
-    { method: 'PUT', 
+  const updateCar = (car,link) => {
+    fetch(link, {
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(car)
+      body: JSON.stringify(car),
     })
-    .then( res =>
-      toast.success("Changes saved", {
-        position: toast.POSITION.BOTTOM_LEFT
-      })         
-    )
-    .catch( err => 
-      toast.error("Error when saving", {
-        position: toast.POSITION.BOTTOM_LEFT
-      })             
-    )
-  }
+      .then((res) =>{
+        toast.success("Changes saved", {
+          position: toast.POSITION.BOTTOM_LEFT,
+        });
+        fetchCars();
+      })
+      .catch((err) =>
+        toast.error("Error when saving", {
+          position: toast.POSITION.BOTTOM_LEFT,
+        })
+      );
+  };
 
   const columns = React.useMemo(
     () => [
@@ -121,13 +123,15 @@ const Carlist = () => {
             Delete
           </button>
         ),
-      },{
-        id: 'savebutton',
+      },
+      {
         sortable: false,
         filterable: false,
         width: 100,
-        accessor: '_links.self.href',
-        Cell: ({value, row}) => (<button onClick={()=>{updateCar(row, value)}}>Save</button>)
+        accessor: "_links.self.href",
+        Cell: ({value, row }) => (
+          <EditCar car={row} updateCar={updateCar}  link={value} fetchCars = {fetchCars}/>
+        ),
       },
     ],
     []
@@ -144,7 +148,9 @@ const Carlist = () => {
   return (
     <>
       <AddCar addCar={addCar} fetchCars={fetchCars} />
-      <CSVLink data={data} separator=";">Export CSV</CSVLink>
+      <CSVLink data={data} separator=";">
+        Export CSV
+      </CSVLink>
       <table {...getTableProps()} style={{ border: "solid 1px blue" }}>
         <thead>
           {headerGroups.map((headerGroup) => (
