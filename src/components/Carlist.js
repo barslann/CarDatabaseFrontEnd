@@ -17,6 +17,17 @@ import { useTable } from 'react-table'
     //     .catch(err => console.log(err));
     // }
 
+    // Delete car
+  const onDelClick = (link) => {
+    fetch(link, {method: 'DELETE'})
+    .then(res => {
+      this.fetchCars();
+    })
+    .catch(err => {
+      console.error(err)
+    }) 
+  }
+
     useEffect(() => {
         fetch(SERVER_URL + '/api/cars')
         .then((response) => response.json())
@@ -45,7 +56,14 @@ import { useTable } from 'react-table'
           {
             Header: 'Price $',
         accessor: 'price',
-          },
+          },{
+            id: 'delbutton',
+            sortable: false,
+            filterable: false,
+            width: 100,
+            accessor: '_links.self.href',
+            Cell: ({value}) => (<button onClick={()=>{onDelClick(value)}}>Delete</button>)
+          }
         ],
         []
       )
